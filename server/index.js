@@ -14,7 +14,11 @@ app.get("/", function (req, res) {
   res.send("hello world!1!");
 });
 
-app.post("/register", (req, res) => {
+app.get("/api/hello", (req, res) => {
+  res.send("hi");
+});
+
+app.post("/api/users/register", (req, res) => {
   const user = new User(req.body); // 상단에서 require로 가져온 User 스키마에 req.body를 담아 user라는 인스턴스로 만든다.
 
   user.save((err, userInfo) => {
@@ -27,7 +31,7 @@ app.post("/register", (req, res) => {
   });
 });
 
-app.post("/login", (req, res) => {
+app.post("/api/users/login", (req, res) => {
   //요청된 이메일을 데이터베이스에서 있는지 찾는다
   //요청된 이메일이 데이터 베이스에 있다면 비밀번호가 맞는 비밀번호 인지 확인
   //비밀번호 까지 맞다면 토큰을 생성하기
@@ -56,7 +60,7 @@ app.post("/login", (req, res) => {
   });
 });
 
-app.get("/auth", auth, (req, res) => {
+app.get("/api/users/auth", auth, (req, res) => {
   //여기까지 미들웨어를 통과해 왔다는 얘기는 인증이 true라는 말이다
   res.status(200).json({
     _id: req.user._id,
@@ -66,7 +70,7 @@ app.get("/auth", auth, (req, res) => {
   });
 });
 
-app.get("/logout", auth, (req, res) => {
+app.get("/api/users/logout", auth, (req, res) => {
   User.findOneAndUpdate({ _id: req.user._id }, { token: "" }, (err, user) => {
     if (err) return res.json({ success: false, err });
     return res.status(200).send({
